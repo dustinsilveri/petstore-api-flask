@@ -1,0 +1,630 @@
+openapi: 3.0.1
+info:
+  title: petstore-api-flask
+  description: OpenAPI 3 spec for petstore-api-flask
+  version: "0.1"
+servers:
+- url: http://localhost:5000
+components: 
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+- bearerAuth: []
+paths:
+  /store/order:
+    post:
+      tags:
+      - store
+      summary: Create an order
+      description: Creates an order for a new pet
+      operationId: addOrder
+      requestBody:
+        description: Create an order
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                petId:
+                  type: integer
+                qty:
+                  type: integer
+                shipDate:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                  - placed
+                  - approved
+                  - delivered
+        required: true
+      responses:
+        201:
+          description: Order added successfully!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    message:
+                      type: string
+  /store/order/{orderId}:
+    get:
+      tags:
+      - store
+      summary: Get an order by Id
+      description: Displays order info by Id.
+      operationId: oneOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: display order 
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complete:
+                      type: integer
+                    id:
+                      type: integer
+                    petId:
+                      type: integer
+                    qty:
+                      type: integer
+                    shipDate:
+                      type: string
+                    status:
+                      type: string
+                      enum:
+                      - placed
+                      - approved
+                      - delivered
+        404:
+          description: Order does not exist
+          content: { }
+    delete:
+      tags:
+      - store
+      summary: Order deleted successfully
+      description: Delete and order by Id.
+      operationId: deleteOrder
+      parameters:
+        - name: orderId
+          in: path
+          description: delete order.
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Order deleted successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    complete:
+                      type: string
+        404:
+          description: Order does not exist
+          content: { }
+  /store/inventory:
+    get:
+      summary: Displays store inventory
+      description: Inventory sorted by status
+      operationId: orderInventory
+      responses:
+        200:
+          description: displays inventory by status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    approved:
+                      type: integer
+                    delivered:
+                      type: integer
+                    placed:
+                      type: integer
+  /user:
+    get:
+      tags:
+      - user
+      summary: Retrieves all users
+      description: Displays all user information
+      operationId: allUsers
+      responses:
+        200:
+          description: Displays all user information
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    firstname:
+                      type: string
+                    id:
+                      type: integer
+                    lastname:
+                      type: string
+                    password:
+                      type: string
+                    phone:
+                      type: string
+                    userStatus:
+                      type: boolean
+                    username:
+                      type: string
+    post:
+      tags: 
+      - user
+      summary: Create a new user
+      description: Creates a new user
+      operationId: addUser
+      requestBody:
+        description: Creates a new user in the system
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+        required: true
+      responses:
+        201:
+          description: User added successfully!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    message:
+                      type: string
+  /user/login:
+    post:
+      tags:
+      - user
+      summary: Login to generate auth token
+      description: Creates an auth token for use in Admin endpoints
+      operationId: login
+      requestBody:
+        description: Login to generate auth token
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+        required: true
+      responses:
+        201:
+          description: Token generated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    access_token:
+                      type: string
+                    message:
+                      type: string
+        401:
+          description: Bad Username or Password
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+  /user/logout:
+    post:
+      tags:
+      - user
+      summary: logout function
+      description: logs a user out of the session
+      operationId: logout
+      requestBody:
+        description: submit the username to logout
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+        required: true
+      responses:
+        200:
+          description: logout
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+  /user/{username}:
+    get:
+      tags:
+      - user
+      summary: View user info by username
+      description: Display user info by username
+      operationId: oneUser
+      parameters:
+        - name: username
+          in: path
+          description: view user info by username
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: See all details of the users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    firstname: 
+                      type: string
+                    id:
+                      type: integer
+                    lastname:
+                      type: string
+                    password:
+                      type: string
+                    phone:
+                      type: string
+                    userStatus:
+                      type: boolean
+                    username:
+                      type: string
+        404:
+          description: User does not exist
+          content: {}
+    put:
+      tags:
+      - user
+      summary: Update user info by username
+      description: Update user info by username
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          description: Update user info by username
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update user info by username
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                lastname:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+        required: true
+      responses:
+        200:
+          description: User updated successfully!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+        404:
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+    delete:
+      tags:
+      - user
+      summary: user deleted successfully
+      description: Delete a user by username
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: delete user
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: User deleted successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+        404:
+          description: User does not exist
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+  /pet:
+    post:
+      tags:
+      - pet
+      summary: Add a new pet
+      description: Add a new pet
+      operationId: addPet
+      requestBody:
+        description: Add pet info in the post body
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                name:
+                  type: string
+                photoUrls:
+                  type: string
+                tags:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                  - available
+                  - pending
+                  - sold
+        required: true
+      responses:
+        201:
+          description: pet added successfully!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    message:
+                      type: string
+  /pet/{petId}:
+    get:
+      tags:
+      - pet
+      summary: View a pet by Id
+      description: View a pet by Id
+      operationId: onePet
+      parameters:
+        - name: petId
+          in: path
+          description: display pet
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    category:
+                      type: string
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    photoUrls:
+                      type: string
+                    status:
+                      type: string
+                    tags:
+                      type: string
+        404:
+          description: Pet does not exist
+          content: { }
+    put:
+      tags:
+      - pet
+      summary: Update a pet by Id
+      description: Update a pet by Id
+      operationId: updatePet
+      parameters:
+        - name: petId
+          in: path
+          description: update pet
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Update pet info in the post body by Id
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category:
+                  type: string
+                name:
+                  type: string
+                photoUrls:
+                  type: string
+                tags:
+                  type: string
+                status:
+                  type: string
+                  enum:
+                  - available
+                  - pending
+                  - sold
+      responses:
+        200:
+          description: Pet updated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+        404:
+          description: Pet does not exist
+          content: { }
+    delete:
+      tags:
+      - pet
+      summary: Delete a pet by Id
+      description: Delete a pet by Id
+      operationId: deletePet
+      parameters:
+        - name: petId
+          in: path
+          description: delete pet
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Pet updated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    message:
+                      type: string
+        404:
+          description: Pet does not exist
+          content: { }
+  /admin/log:
+    get:
+      tags:
+      - admin
+      summary: View server logs
+      description: admin function to view logs of server
+      operationId: readLog
+      parameters:
+      - name: logFile
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+        example: start.sh
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: View server logs
+          content: { }
+        401:
+          description: Missing Authorization header
+          content: { }
+  /admin/run/uptime:
+    get:
+      tags:
+      - admin
+      summary: View server uptime
+      description: admin function to view uptime of server
+      operationId: run
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: View server uptime
+          content: { }
+        401:
+          description: Missing Authorization header
+          content: { }
+
+

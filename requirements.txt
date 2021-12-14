@@ -1,0 +1,4 @@
+flask
+PyMySQL
+flask-mysql
+flask_jwt_extended
