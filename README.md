@@ -6,6 +6,12 @@ docker build -t petstore .
 docker run --name=petstore -d -p 5000:5000 petstore:latest
 ```
 
+## Docker Compose
+```sh
+docker compose -f docker-compose.yml up
+docker compose -f docker-compose.yml down # to kill
+```
+
 ## Purpose
 This is a vulnerable by design API.  It is very poorly coded to test and see how vulnerabilities can exist in APIs.  It has been designed after the Swagger Pet Store API.  It uses the same schema and endpoints. 
 
